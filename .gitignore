@@ -1,0 +1,21 @@
+# ---- 临时取证物（收尾清理）----
+_decompile/
+_spell.zip
+_jar_entries.txt
+_repo_tree.txt
+_maidspell-mod.jar
+[车万女仆：万法皆通] touhou_little_maid_spell-1.9.2.1-forge+mc1.20.1-all.jar
+
+# ---- 构建 / 运行产物 ----
+build/
+run/
+.gradle/
+*.class
+
+# ---- 本地依赖（不入库，从带前缀原文件复制更名）----
+libs/
+
+# ---- IDE ----
+*.iml
+.idea/
+.vscode/

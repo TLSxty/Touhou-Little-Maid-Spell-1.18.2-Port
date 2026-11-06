@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+license = "MIT"
+
+[[mods]]
+modId = "touhou_little_maid_spell"
+version = "1.9.2.1-forge+mc1.18.2-PORT"
+displayName = "Touhou Little Maid: Spell (1.18.2 Port)"
+authors = "DreamCat"
+description = '''Partial port: baubles + structures, no magic adaptation.'''
+
+[[dependencies."touhou_little_maid_spell"]]
+modId = "forge"
+mandatory = true
+versionRange = "[40,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."touhou_little_maid_spell"]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2,1.18.3)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."touhou_little_maid_spell"]]
+modId = "touhou_little_maid"
+mandatory = true
+versionRange = "[1.2.2,)"
+ordering = "AFTER"
+side = "BOTH"
