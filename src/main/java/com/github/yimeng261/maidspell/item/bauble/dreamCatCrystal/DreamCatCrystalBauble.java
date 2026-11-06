@@ -6,10 +6,12 @@ import com.github.tartaricacid.touhoulittlemaid.inventory.handler.BaubleItemHand
 import com.github.yimeng261.maidspell.Config;
 import com.github.yimeng261.maidspell.Global;
 import com.github.yimeng261.maidspell.api.IMaidBaubleLifecycle;
+import com.github.yimeng261.maidspell.api.IAuthoritativeHealth;
 import com.github.yimeng261.maidspell.dimension.TheRetreatDimension;
 import com.github.yimeng261.maidspell.item.MaidSpellItems;
 import com.github.yimeng261.maidspell.spell.manager.BaubleStateManager;
 import com.github.yimeng261.maidspell.utils.PortableTimerMath;
+import com.github.yimeng261.maidspell.utils.TrueDamageUtil;
 import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +40,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -62,17 +65,18 @@ import org.slf4j.Logger;
  *       {@code grantAdvancement(EntityMaid)}。</li>
  * </ol>
  *
- * <p><b>本批次暂不生效（等批次 B 补 Mixin）</b>：
+ * <p><b>批次 B 恢复的三项能力</b>（Mixin 基础设施到位后重新生效）：
  * <ul>
- *   <li>TODO(批次B) 受伤抗性：{@code baubleSetHealthFinalHandlers} 里「伤害 ×0.7、上限 40」已注册，
- *       但 1.18.2 下 {@code MaidDamageProcessor} 的调用点是 Mixin（{@code LivingEntityMixin} /
- *       {@code SynchedEntityDataHealthMixin}），本批次不引入 Mixin 基础设施，因此注册了也不会被调用。</li>
- *   <li>TODO(批次B) 有害效果免疫：{@code baubleEffectBlockFilters} 已注册，
- *       消费点是 {@code LivingEntityMixin} / {@code MobEffectMixin}，同样暂不生效。</li>
- *   <li>TODO(批次B) 真实伤害 + 5 格弹幕溅射：原文 {@code Global.registerBaubleHurtHeadHandler(...)}，
- *       依赖 {@code utils/TrueDamageUtil} → {@code mixin/accessor/LivingEntityInvoker} 与
- *       {@code SynchedEntityDataMixin}，且 {@code baubleHurtHeadHandlers} 的消费方是原模组的字节码
- *       coremod（{@code HurtHeadTransformationService}），两条链本批次都没有，故整段未搬。</li>
+ *   <li>受伤抗性：{@code baubleSetHealthFinalHandlers} 里「伤害 ×0.7、上限 40」，
+ *       消费链为 {@code MaidDamageProcessor.applyBaubleHandlers} ← {@code LivingEntityMixin}。</li>
+ *   <li>有害效果免疫：{@code baubleEffectBlockFilters}，
+ *       消费点为 {@code LivingEntityMixin} 的 {@code addEffect} 头部拦截。</li>
+ *   <li>真实伤害 + 5 格弹幕溅射：{@code Global.registerBaubleHurtHeadHandler(...)}，
+ *       消费点为 {@code LivingEntityMixin} 的 {@code hurt} 头部（{@code Global.dispatchHurtHeadHandlers}）。</li>
+ * </ul>
+ *
+ * <p><b>仍未恢复（需额外依赖）</b>：
+ * <ul>
  *   <li>TODO(批次B) curios 额外槽：{@code compat/curios/DreamCrystalCurios} 依赖 curios 模组 API，
  *       本工程无该依赖，故 {@code applyCuriosSlot} 整段未搬。将来若要恢复需先加 curios 依赖。</li>
  * </ul>
@@ -504,9 +508,7 @@ public class DreamCatCrystalBauble implements IMaidBauble, IMaidBaubleLifecycle 
     // ---------------------------------------------------------------- 分发注册
 
     static {
-        // TODO(批次B)：下面两个注册在 1.18.2 的消费点是 Mixin（受伤抗性走 MaidDamageProcessor←LivingEntityMixin，
-        //  有害效果免疫走 LivingEntityMixin/MobEffectMixin）。本批次不引入 Mixin 基础设施，
-        //  因此注册进去也暂时不会被调用；保留注册是为了批次 B 补 Mixin 后无需再改这里。
+        // ① 受伤抗性：伤害 ×0.7、上限 40。消费链 MaidDamageProcessor.applyBaubleHandlers ← LivingEntityMixin。
         Global.baubleSetHealthFinalHandlers.put(MaidSpellItems.DREAM_CAT_CRYSTAL.get(), data -> {
             float amount = data.getAmount();
             amount *= 0.7f;
@@ -514,8 +516,38 @@ public class DreamCatCrystalBauble implements IMaidBauble, IMaidBaubleLifecycle 
             data.setAmount(amount);
             return null;
         });
+        // ② 有害效果免疫：非正面效果一律拒绝添加。消费点 LivingEntityMixin 的 addEffect 头部拦截。
         Global.baubleEffectBlockFilters.put(MaidSpellItems.DREAM_CAT_CRYSTAL.get(),
                 (maid, effect) -> effect.getCategory() != MobEffectCategory.BENEFICIAL);
+        // ③ 真实伤害 + 5 格弹幕溅射。
+        //    原模组里 baubleHurtHeadHandlers 的消费方是字节码 coremod（HurtHeadTransformationService），
+        //    本工程的消费点改到 LivingEntityMixin 的 hurt 头部调用 Global.dispatchHurtHeadHandlers。
+        Global.registerBaubleHurtHeadHandler(MaidSpellItems.DREAM_CAT_CRYSTAL.get(), context -> {
+            if (TrueDamageUtil.isApplyingQueuedDamage()) {
+                return;
+            }
+            EntityMaid maid = context.getSourceMaid();
+            if (maid == null) {
+                return;
+            }
+            LivingEntity target = context.getTarget();
+            if (!IAuthoritativeHealth.combatAlive(target)) {
+                return;
+            }
+            float damage = context.getAmount();
+            if (Config.dreamCrystalExtraTrueDamageEnabled) {
+                TrueDamageUtil.dealTrueDamage(target, damage, maid);
+            }
+            if (!maid.getLevel().isClientSide) {
+                float barrageDamage = damage * 0.1f;
+                maid.getLevel().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(5.0),
+                                entity -> entity != maid && entity != target
+                                        && IAuthoritativeHealth.combatAlive(entity)
+                                        && !(entity instanceof Player)
+                                        && !(entity instanceof EntityMaid))
+                        .forEach(nearby -> TrueDamageUtil.dealTrueDamage(nearby, barrageDamage, maid));
+            }
+        });
     }
 
     // ---------------------------------------------------------------- 内部类型

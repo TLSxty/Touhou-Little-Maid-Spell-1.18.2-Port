@@ -45,6 +45,43 @@ public final class Config {
     public static double springBloomReturnDamageThresholdRatio = 0.1;
     public static double springBloomReturnHealRatio = 0.05;
 
+    // ---- 伤害 ----
+    public static double silverCercisTrueDamageMultiplier = 0.8;
+    public static int silverCercisTriggerCount = 3;
+    public static int silverCercisCooldownTicks = 5;
+    public static double chaosBookTrueDamageMin = 5.0;
+    public static double chaosBookTrueDamagePercent = 0.01;
+    public static int chaosBookDamageSplitCount = 5;
+    public static double chaosBookMinSplitDamage = 3.0;
+
+    // ---- 治疗 ----
+    public static double bleedingHeartHealRatio = 0.1;
+    public static double flowCoreHealthRegenRate = 0.025;
+
+    // ---- 防御 ----
+    public static double flowCoreDamageReduction = 0.15;
+    public static double doubleHeartChainShareRatio = 0.5;
+    public static double doubleHeartChainMaxDistance = 32.0;
+    public static int rockCrystalKnockbackResistance = 8;
+
+    // ---- 实用 ----
+    public static int flowCoreTickInterval = 10;
+    public static double hairpinBeneficialEffectExtension = 1.15;
+    public static int hairpinMinExtensionTicks = 300;
+    public static int fragrantIngenuityFavorabilityGain = 2;
+    public static int fragrantIngenuityBuffDuration = 2400;
+    public static java.util.List<String> fragrantIngenuityEffectBlacklist = java.util.List.of();
+
+    // ---- 触发 ----
+    public static double soulBookDamageThresholdPercent = 0.2;
+    public static int soulBookDamageIntervalThreshold = 10;
+    public static int woundRimeBladeRecordTimes = 15;
+
+    // ---- 特殊 ----
+    public static double floatingFoxLeafOwnerRange = 16.0;
+    public static double moltenFoxLeafOwnerRange = 16.0;
+    public static double springRingMaxDamageBonus = 0.5;
+
     private Config() {
     }
 

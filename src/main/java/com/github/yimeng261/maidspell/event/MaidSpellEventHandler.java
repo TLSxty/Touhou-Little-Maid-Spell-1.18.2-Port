@@ -11,11 +11,13 @@ import com.github.yimeng261.maidspell.Global;
 import com.github.yimeng261.maidspell.api.IMaidBaubleLifecycle;
 import com.github.yimeng261.maidspell.item.bauble.dreamCatCrystal.DreamCatCrystalBauble;
 import com.github.yimeng261.maidspell.spell.manager.BaubleStateManager;
+import com.github.yimeng261.maidspell.utils.TrueDamageUtil;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -248,5 +250,20 @@ public final class MaidSpellEventHandler {
         if (event.getEntity() instanceof EntityMaid maid) {
             BAUBLE_SNAPSHOT.remove(maid.getUUID());
         }
+    }
+
+    /**
+     * 真伤队列的消费端。
+     * <p>
+     * {@code TrueDamageUtil.dealTrueDamage} 只是把伤害入队（绕过原版伤害结算，直接改血量），
+     * 必须每 tick 排空一次队列才会真正生效。原模组由 {@code ServerTickEvent} 驱动，
+     * 这里同样挂在 server tick 的 END 阶段。
+     */
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        TrueDamageUtil.processQueuedTrueDamage();
     }
 }

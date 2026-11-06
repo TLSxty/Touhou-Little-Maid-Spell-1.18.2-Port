@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
@@ -41,12 +42,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *   <li>import {@code SpellBookManager}。</li>
  * </ul>
  *
- * <p><b>⚠ 副作用（必须知道）</b>：层数唯一来源就是被删掉的 {@code onSpellCast}，
- * 因此删除后 {@code expiries} 恒为空，{@code tryTrigger} 在
- * 「{@code state.expiries().isEmpty()} → return」处直接返回，
- * <b>减伤与清负面在批次 A 里实际不会触发</b>。这是「去魔法」的必然结果，
- * 代码逻辑本身完整保留；若将来要恢复触发，需要给层数另找一个非魔法来源
- * （例如「女仆受击累计」），届时才需要设计。
+ * <p><b>层数来源（本工程改动，用户 m00911 拍板）</b>：原实现的层数唯一来源是被删掉的
+ * {@code onSpellCast}（每次施法加一层），删掉后 {@code expiries} 恒为空、
+ * 减伤与清负面永远不会触发。本工程改为 <b>「女仆击杀一个生物叠一层」</b>：
+ * 监听 {@link LivingDeathEvent}，用 {@code getKillCredit()} 判断击杀者是否为佩戴春华归返的女仆，
+ * 命中则按 {@code springBloomReturnMaxStacks} 上限、{@code springBloomReturnGainCooldownTicks}
+ * 间隔、{@code springBloomReturnStackDurationTicks} 时长写入同一套 {@code expiries} NBT。
+ * 这样减伤/清负面在无魔法环境下依然可触发。</p>
  */
 public class SpringBloomReturnBauble implements IMaidBauble, IMaidBaubleLifecycle {
 
@@ -79,6 +81,54 @@ public class SpringBloomReturnBauble implements IMaidBauble, IMaidBaubleLifecycl
     @Override
     public void onTakeOff(EntityMaid maid, ItemStack baubleItem) {
         EQUIPPED_SLOT_CACHE.remove(maid.getUUID());
+    }
+
+    // ---------------------------------------------------------------- 层数来源：女仆击杀
+
+    /**
+     * 女仆击杀生物 → 给佩戴者的春华归返叠一层。
+     * <p>
+     * 替代原版的 {@code onSpellCast}（施法叠层）。用 {@code getKillCredit()} 判定击杀者，
+     * 它会正确处理「女仆的弹幕/召唤物造成的伤害」这类间接击杀。
+     */
+    @SubscribeEvent
+    public void onLivingDeath(LivingDeathEvent event) {
+        LivingEntity victim = event.getEntityLiving();
+        if (victim == null || victim.getLevel().isClientSide) {
+            return;
+        }
+        if (!(victim.getKillCredit() instanceof EntityMaid maid)) {
+            return;
+        }
+        ItemStack stack = findEquippedStack(maid);
+        if (stack.isEmpty()) {
+            return;
+        }
+        gainStack(stack, maid);
+    }
+
+    /** 叠一层：受上限与获得冷却约束，写入同一套 expiries NBT。 */
+    private static void gainStack(ItemStack stack, EntityMaid maid) {
+        long now = getServerGameTime(maid);
+        TimerState state = prepareTimerState(stack, maid, now);
+        if (!state.writable()) {
+            return;
+        }
+        if (state.gainCooldownUntil() != null && now < state.gainCooldownUntil()) {
+            return;
+        }
+        int limit = Math.min(MAX_STORED_STACKS, Math.max(0, Config.springBloomReturnMaxStacks));
+        if (state.expiries().size() >= limit) {
+            return;
+        }
+        Long expiry = deadlineOrNull(now, Config.springBloomReturnStackDurationTicks);
+        if (expiry == null) {
+            return;
+        }
+        state.expiries().add(expiry);
+        state.expiries().sort(Long::compareTo);
+        state.setGainCooldownUntil(deadlineOrNull(now, Config.springBloomReturnGainCooldownTicks));
+        saveTimerState(stack, state, true);
     }
 
     // ---------------------------------------------------------------- 受击
