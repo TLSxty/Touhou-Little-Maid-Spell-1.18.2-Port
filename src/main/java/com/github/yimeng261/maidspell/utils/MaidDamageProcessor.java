@@ -47,7 +47,9 @@ public final class MaidDamageProcessor {
         }
         CombatEntry last = entries.get(entries.size() - 1);
         float expected = entity.getHealth() - requestedHealth;
-        return Math.abs(last.getHealthBeforeDamage() - expected) <= 0.1f;
+        // 必须比对 CombatEntry 的 damage 字段（本次最终伤害量），不是 health 字段（受伤前血量）。
+        // 原模组写的是 f_19252_，对应 1.18.2 的 getDamage()；f_19253_（health）才是 getHealthBeforeDamage()。
+        return Math.abs(last.getDamage() - expected) <= 0.1f;
     }
 
     public static MaidHealthChange processMaidHealthDecrease(EntityMaid maid, float requestedHealth) {
