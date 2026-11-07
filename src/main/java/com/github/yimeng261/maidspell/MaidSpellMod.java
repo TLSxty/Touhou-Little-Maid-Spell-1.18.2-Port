@@ -3,6 +3,7 @@ package com.github.yimeng261.maidspell;
 import com.github.yimeng261.maidspell.block.MaidSpellBlocks;
 import com.github.yimeng261.maidspell.effect.MaidSpellEffects;
 import com.github.yimeng261.maidspell.item.MaidSpellItems;
+import com.github.yimeng261.maidspell.network.NetworkHandler;
 import com.github.yimeng261.maidspell.particle.MaidSpellParticles;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -34,6 +35,7 @@ public class MaidSpellMod {
         MaidSpellItems.register(modEventBus);
         MaidSpellEffects.register(modEventBus);
         MaidSpellParticles.register(modEventBus);
+        NetworkHandler.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.BAUBLES_SPEC, "touhou_little_maid_spell-baubles.toml");
         // 事件订阅者（MaidSpellEventHandler）由 @Mod.EventBusSubscriber 自动注册，无需在此登记。
     }

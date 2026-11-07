@@ -16,6 +16,7 @@ import com.github.yimeng261.maidspell.item.bauble.soulBook.SoulBook;
 import com.github.yimeng261.maidspell.item.bauble.springBloomReturn.SpringBloomReturn;
 import com.github.yimeng261.maidspell.item.bauble.springRing.SpringRing;
 import com.github.yimeng261.maidspell.item.bauble.staranchorPearl.StaranchorPearl;
+import com.github.yimeng261.maidspell.item.bauble.transmogNecklace.TransmogNecklace;
 import com.github.yimeng261.maidspell.item.bauble.woundRimeBlade.WoundRimeBlade;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -84,9 +85,10 @@ public class MaidSpellItems {
             ITEMS.register("floating_fox_leaf", FloatingFoxLeaf::new);
     public static final RegistryObject<Item> MOLTEN_FOX_LEAF =
             ITEMS.register("molten_fox_leaf", MoltenFoxLeaf::new);
+    public static final RegistryObject<Item> TRANSMOG_NECKLACE =
+            ITEMS.register("transmog_necklace", TransmogNecklace::new);
 
     // TODO(批次B 后续两档)：以下饰品需要连带搬入较大支撑类，本次未注册：
-    //  · transmog_necklace    → 需要 TransmogNecklaceScreen（GUI）+ TransmogNecklaceMessage（网络）
     //  · ender_pocket         → 按用户决策降级为「右键物品直接开末影箱」，不做女仆饰品
     //  · anchor_core          → 需要 ChunkLoadingManager（连带 the_retreat 维度链）
 

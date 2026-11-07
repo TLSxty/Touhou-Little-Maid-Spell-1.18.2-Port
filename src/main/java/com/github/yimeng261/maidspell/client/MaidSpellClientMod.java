@@ -1,10 +1,12 @@
 package com.github.yimeng261.maidspell.client;
 
 import com.github.yimeng261.maidspell.Config;
+import com.github.yimeng261.maidspell.client.model.SharedHaloModel;
 import com.github.yimeng261.maidspell.client.particle.VoidSpellParticle;
 import com.github.yimeng261.maidspell.particle.MaidSpellParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,5 +31,11 @@ public final class MaidSpellClientMod {
         Minecraft.getInstance().particleEngine.register(
                 MaidSpellParticles.VOID_SPELL.get(),
                 VoidSpellParticle.Provider::new);
+    }
+
+    /** 头顶光环的模型层要在这里注册，否则 bakeLayer 会抛「Unknown layer」异常。 */
+    @SubscribeEvent
+    public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(SharedHaloModel.LAYER_LOCATION, SharedHaloModel::createBodyLayer);
     }
 }
