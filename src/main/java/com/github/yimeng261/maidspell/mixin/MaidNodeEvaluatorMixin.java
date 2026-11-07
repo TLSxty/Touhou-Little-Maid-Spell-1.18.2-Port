@@ -3,6 +3,7 @@ package com.github.yimeng261.maidspell.mixin;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.navigation.MaidNodeEvaluator;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.yimeng261.maidspell.item.MaidSpellItems;
+import com.github.yimeng261.maidspell.mixin.accessor.NodeEvaluatorAccessor;
 import com.github.yimeng261.maidspell.spell.manager.BaubleStateManager;
 import com.github.yimeng261.maidspell.utils.FoxLeafSurfaceHelper;
 import net.minecraft.core.BlockPos;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -25,19 +25,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * {@code getBlockPathType(BlockGetter,int,int,int): BlockPathTypes}（javap 实测，
  * 其 SRG 名 {@code m_8086_} 在 official 映射下就是 {@code getBlockPathType}），
  * 因此注入点写 official 名 + 完整描述符（该抽象类有两个同名的 {@code getBlockPathType} 重载）。
+ * <p>
+ * <b>不要在这里用 {@code @Shadow protected Mob mob} 读当前生物</b>：该字段声明在爷爷类
+ * {@code NodeEvaluator}，{@code @Shadow} 只覆盖目标类自身，生产环境会抛
+ * {@code @Shadow field mob was not located in the target class}。改走
+ * {@link NodeEvaluatorAccessor}。
  */
 @Mixin(MaidNodeEvaluator.class)
 public abstract class MaidNodeEvaluatorMixin {
-
-    /** 继承自 {@code NodeEvaluator} 的受保护字段，当前正在寻路的生物。 */
-    @Shadow
-    protected Mob mob;
 
     @Inject(method = "getBlockPathType(Lnet/minecraft/world/level/BlockGetter;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;",
             at = @At("HEAD"), cancellable = true)
     private void maidspell$lavaSurfaceWalkable(BlockGetter level, int x, int y, int z,
                                                CallbackInfoReturnable<BlockPathTypes> cir) {
-        if (!(this.mob instanceof EntityMaid maid)) {
+        Mob mob = ((NodeEvaluatorAccessor) this).maidspell$getMob();
+        if (!(mob instanceof EntityMaid maid)) {
             return;
         }
         if (!BaubleStateManager.hasBauble(maid, MaidSpellItems.MOLTEN_FOX_LEAF)) {
