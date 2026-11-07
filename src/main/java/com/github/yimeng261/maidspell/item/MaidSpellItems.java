@@ -5,6 +5,7 @@ import com.github.yimeng261.maidspell.item.bauble.bleedingHeart.BleedingHeart;
 import com.github.yimeng261.maidspell.item.bauble.chaosBook.ChaosBook;
 import com.github.yimeng261.maidspell.item.bauble.doubleHeartChain.DoubleHeartChain;
 import com.github.yimeng261.maidspell.item.bauble.dreamCatCrystal.DreamCatCrystal;
+import com.github.yimeng261.maidspell.item.bauble.enderPocket.EnderPocket;
 import com.github.yimeng261.maidspell.item.bauble.flowCore.FlowCore;
 import com.github.yimeng261.maidspell.item.bauble.floatingFoxLeaf.FloatingFoxLeaf;
 import com.github.yimeng261.maidspell.item.bauble.fragrantIngenuity.FragrantIngenuity;
@@ -87,9 +88,11 @@ public class MaidSpellItems {
             ITEMS.register("molten_fox_leaf", MoltenFoxLeaf::new);
     public static final RegistryObject<Item> TRANSMOG_NECKLACE =
             ITEMS.register("transmog_necklace", TransmogNecklace::new);
+    /** 末影腰包：按用户决策降级为「右键直接开玩家末影箱」，不再是女仆饰品。 */
+    public static final RegistryObject<Item> ENDER_POCKET =
+            ITEMS.register("ender_pocket", EnderPocket::new);
 
     // TODO(批次B 后续两档)：以下饰品需要连带搬入较大支撑类，本次未注册：
-    //  · ender_pocket         → 按用户决策降级为「右键物品直接开末影箱」，不做女仆饰品
     //  · anchor_core          → 需要 ChunkLoadingManager（连带 the_retreat 维度链）
 
     private MaidSpellItems() {
