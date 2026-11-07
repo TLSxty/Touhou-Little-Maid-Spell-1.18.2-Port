@@ -13,8 +13,9 @@ implements IMaidBauble {
     static {
         Global.baubleDamageHandlers.put((Item)MaidSpellItems.BLEEDING_HEART.get(), (event, maid) -> {
             Float amount = Float.valueOf(event.getAmount());
-            Player owner = (Player)maid.getOwner();
-            if (owner != null) {
+            // 上游直接强转 (Player) maid.getOwner()；这里先判 instanceof 再强转，
+            // 避免主人不是 Player 时抛 ClassCastException（TLM 主人恒为 Player，纯防御）。
+            if (maid.getOwner() instanceof Player owner) {
                 owner.heal(amount.floatValue() * (float)Config.bleedingHeartHealRatio);
             }
             maid.heal(amount.floatValue() * (float)Config.bleedingHeartHealRatio);
