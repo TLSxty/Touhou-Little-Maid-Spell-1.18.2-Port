@@ -3,6 +3,7 @@ package com.github.yimeng261.maidspell.api;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.mutable.MutableFloat;
 
 /**
  * 饰品生命周期回调（本模组自建）。
@@ -41,6 +42,19 @@ public interface IMaidBaubleLifecycle {
      *         false 表示放行。
      */
     default boolean onDeath(EntityMaid maid, ItemStack baubleItem, DamageSource source) {
+        return false;
+    }
+
+    /**
+     * 女仆即将受伤时调用（在 {@code LivingHurtEvent} 阶段，伤害已定值但尚未扣除）。
+     *
+     * <p>语义照抄 1.20 的 {@code IMaidBauble#onInjured}：
+     * 返回 true 表示本次伤害被取消，且**后续饰品不再触发**。</p>
+     *
+     * @param damage 可变伤害值，饰品可以直接修改（改小或清零）；返回 true 时该值不再被使用
+     * @return true 表示取消本次伤害并停止后续饰品；false 表示放行
+     */
+    default boolean onInjured(EntityMaid maid, ItemStack baubleItem, DamageSource source, MutableFloat damage) {
         return false;
     }
 }

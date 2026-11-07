@@ -13,6 +13,7 @@ import com.github.yimeng261.maidspell.item.bauble.silverCercis.SilverCercis;
 import com.github.yimeng261.maidspell.item.bauble.soulBook.SoulBook;
 import com.github.yimeng261.maidspell.item.bauble.springBloomReturn.SpringBloomReturn;
 import com.github.yimeng261.maidspell.item.bauble.springRing.SpringRing;
+import com.github.yimeng261.maidspell.item.bauble.staranchorPearl.StaranchorPearl;
 import com.github.yimeng261.maidspell.item.bauble.woundRimeBlade.WoundRimeBlade;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -74,12 +75,15 @@ public class MaidSpellItems {
     public static final RegistryObject<Item> FRAGRANT_INGENUITY =
             ITEMS.register("fragrant_ingenuity", FragrantIngenuity::new);
 
+    // ---- 批次 B 第三档（遗留项） ----
+    public static final RegistryObject<Item> STARANCHOR_PEARL =
+            ITEMS.register("staranchor_pearl", StaranchorPearl::new);
+
     // TODO(批次B 后续两档)：以下饰品需要连带搬入较大支撑类，本次未注册：
     //  · transmog_necklace    → 需要 TransmogNecklaceScreen（GUI）+ TransmogNecklaceMessage（网络）
     //  · ender_pocket         → 需要 NetworkHandler + EnderPocketDataMessage + 客户端整合
     //  · floating_fox_leaf    → 需要 MaidSpellBlocks（88 行）+ 9 个 block.custom.* + FoxLeafSurfaceHelper
     //  · molten_fox_leaf      → 同上
-    //  · staranchor_pearl     → 需要 StaranchorStunEffect / VoidWalkEffect（已搬）与自定义投掷物
     //  · anchor_core          → 需要 ChunkLoadingManager（连带 the_retreat 维度链）
 
     private MaidSpellItems() {

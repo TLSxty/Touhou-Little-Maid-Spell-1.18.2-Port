@@ -15,6 +15,7 @@ import com.github.yimeng261.maidspell.utils.TrueDamageUtil;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
@@ -25,6 +26,7 @@ import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,6 +217,44 @@ public final class MaidSpellEventHandler {
                 function.apply(event, maid);
             }
         });
+        // 饰品 onInjured 桥（TLM 1.2.2 的 IMaidBauble 没有这个方法，由本模组自建分发）。
+        // 语义照抄 1.20：返回 true = 取消本次伤害且后续饰品不再触发。
+        if (event.isCanceled()) {
+            return;
+        }
+        MutableFloat damage = new MutableFloat(event.getAmount());
+        boolean canceled = dispatchInjured(maid, event.getSource(), damage);
+        if (canceled) {
+            event.setCanceled(true);
+            return;
+        }
+        float finalAmount = damage.floatValue();
+        if (finalAmount != event.getAmount()) {
+            event.setAmount(finalAmount);
+        }
+    }
+
+    /** 遍历女仆饰品栏，逐个调用 {@link IMaidBaubleLifecycle#onInjured}。 */
+    private static boolean dispatchInjured(EntityMaid maid, DamageSource source, MutableFloat damage) {
+        BaubleItemHandler handler = maid.getMaidBauble();
+        for (int i = 0; i < handler.getSlots(); ++i) {
+            ItemStack stack = handler.getStackInSlot(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            IMaidBauble bauble = BaubleManager.getBauble(stack);
+            if (!(bauble instanceof IMaidBaubleLifecycle lifecycle)) {
+                continue;
+            }
+            try {
+                if (lifecycle.onInjured(maid, stack, source, damage)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                LOGGER.error("饰品 {} 的 onInjured 抛出异常", stack.getItem(), e);
+            }
+        }
+        return false;
     }
 
     @SubscribeEvent

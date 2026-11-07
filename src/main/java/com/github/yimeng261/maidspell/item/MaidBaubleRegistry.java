@@ -15,6 +15,7 @@ import com.github.yimeng261.maidspell.item.bauble.silverCercis.SilverCercisBaubl
 import com.github.yimeng261.maidspell.item.bauble.soulBook.SoulBookBauble;
 import com.github.yimeng261.maidspell.item.bauble.springBloomReturn.SpringBloomReturnBauble;
 import com.github.yimeng261.maidspell.item.bauble.springRing.SpringBauble;
+import com.github.yimeng261.maidspell.item.bauble.staranchorPearl.StaranchorPearlBauble;
 import com.github.yimeng261.maidspell.item.bauble.woundRimeBlade.WoundRimeBladeBauble;
 
 /**
@@ -60,13 +61,13 @@ public class MaidBaubleRegistry implements ILittleMaid {
         manager.bind(MaidSpellItems.SLIVER_CERCIS, new SilverCercisBauble());
         manager.bind(MaidSpellItems.WOUND_RIME_BLADE, new WoundRimeBladeBauble());
         manager.bind(MaidSpellItems.FRAGRANT_INGENUITY, new FragrantIngenuityBauble());
+        manager.bind(MaidSpellItems.STARANCHOR_PEARL, new StaranchorPearlBauble());
 
         // TODO(批次B 后续两档)：以下饰品需要连带搬入较大支撑类，本次未 bind，搬入后在此恢复：
         //  manager.bind(MaidSpellItems.TRANSMOG_NECKLACE, new TransmogNecklaceBauble());  // 需 GUI + 网络包
-        //  manager.bind(MaidSpellItems.ENDER_POCKET, new EnderPocketBauble());            // 需网络包 + 客户端整合
         //  manager.bind(MaidSpellItems.FLOATING_FOX_LEAF, new FloatingFoxLeafBauble());   // 需方块 + helper
         //  manager.bind(MaidSpellItems.MOLTEN_FOX_LEAF, new MoltenFoxLeafBauble());       // 需方块 + helper
-        //  manager.bind(MaidSpellItems.STARANCHOR_PEARL, new StaranchorPearlBauble());    // 需投掷物
         //  manager.bind(MaidSpellItems.ANCHOR_CORE, new AnchorCoreBauble());              // 需 the_retreat 维度链
+        // 末影腰包按用户决策降级为「右键开末影箱」，不做女仆饰品（无 MaidContainerGuiEvent 可挂）。
     }
 }

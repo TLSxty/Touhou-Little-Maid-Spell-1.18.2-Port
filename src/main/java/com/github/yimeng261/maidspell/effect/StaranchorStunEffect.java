@@ -1,6 +1,7 @@
 package com.github.yimeng261.maidspell.effect;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.yimeng261.maidspell.Config;
 import com.github.yimeng261.maidspell.api.IAuthoritativeHealth;
 import com.github.yimeng261.maidspell.compat.MaidSpellAllyResolver;
 import com.github.yimeng261.maidspell.particle.MaidSpellParticles;
@@ -15,13 +16,19 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 /**
  * 星锚眩晕：落地冲击波，命中范围内的敌人施加眩晕并打断当前动作。
  * <p>
  * 相比 1.20.1 原实现，这里去掉了铁魔法（StaranchorStunSpellInterrupt）与
  * SpellBookManager#stopAllCasting 两段——它们属于魔法系统，本移植不启用。
+ * <p>
+ * 上游在主类里用 {@code forgeBus.register(StaranchorStunEffect.class)} 登记
+ * 两个静态监听（打断攻击 / 打断交互）；本工程改用 {@code @Mod.EventBusSubscriber}
+ * 自动登记，效果一致。
  */
+@Mod.EventBusSubscriber(modid = Config.MOD_ID)
 public final class StaranchorStunEffect extends MobEffect {
 
     public static final double SHOCKWAVE_RADIUS = 6.0;
