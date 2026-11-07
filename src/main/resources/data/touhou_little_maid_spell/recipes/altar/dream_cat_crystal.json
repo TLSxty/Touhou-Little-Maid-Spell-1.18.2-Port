@@ -1,0 +1,33 @@
+{
+  "type": "touhou_little_maid:altar_crafting",
+  "output": {
+    "type": "minecraft:item",
+    "nbt": {
+      "Item": {
+        "id": "touhou_little_maid_spell:dream_cat_crystal",
+        "Count": 1
+      }
+    }
+  },
+  "power": 1.0,
+  "ingredients": [
+    {
+      "item": "minecraft:end_crystal"
+    },
+    {
+      "item": "minecraft:heart_of_the_sea"
+    },
+    {
+      "item": "minecraft:nether_star"
+    },
+    {
+      "item": "minecraft:enchanted_golden_apple"
+    },
+    {
+      "item": "minecraft:totem_of_undying"
+    },
+    {
+      "item": "minecraft:amethyst_block"
+    }
+  ]
+}
