@@ -6,6 +6,7 @@
   "refmap": "touhou_little_maid_spell.refmap.json",
   "mixins": [
     "LivingEntityMixin",
+    "MinecraftServerMixin",
     "accessor.CombatTrackerMixin",
     "accessor.SynchedEntityDataMixin",
     "accessor.LivingEntityInvoker",
