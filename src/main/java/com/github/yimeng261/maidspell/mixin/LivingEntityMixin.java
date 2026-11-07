@@ -3,16 +3,19 @@ package com.github.yimeng261.maidspell.mixin;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.yimeng261.maidspell.Global;
 import com.github.yimeng261.maidspell.api.IAuthoritativeHealth;
+import com.github.yimeng261.maidspell.item.MaidSpellItems;
 import com.github.yimeng261.maidspell.item.bauble.hairpin.HairpinBauble;
 import com.github.yimeng261.maidspell.item.bauble.soulBook.SoulBookBauble;
 import com.github.yimeng261.maidspell.item.bauble.woundRimeBlade.WoundRimeBladeBauble;
 import com.github.yimeng261.maidspell.spell.manager.BaubleStateManager;
+import com.github.yimeng261.maidspell.utils.FoxLeafOwnerEffectHelper;
 import com.github.yimeng261.maidspell.utils.MaidDamageProcessor;
 import com.github.yimeng261.maidspell.utils.MaidHealthWriteGuard;
 import java.util.Map;
 import java.util.function.BiFunction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,6 +23,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.FluidState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,8 +41,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *   <li>原版用 {@code @WrapOperation}（mixinextras）拦截 {@code addEffect} 内部的 Map.put，
  *       1.18.2 Forge 不自带 mixinextras，这里改为在 {@code addEffect} 头部 {@code @Inject} +
  *       {@code setReturnValue(false)}，语义等价（效果不会进入效果表），且不引入额外依赖。</li>
- *   <li>原版还混入了 {@code canStandOnFluid}（浮狐叶/熔狐叶水面行走）。这两个饰品本批次未搬，
- *       故该方法暂不注入；搬浮狐叶/熔狐叶时在此补回。</li>
+ *   <li>{@code canStandOnFluid}（浮狐叶/熔狐叶踏水行走）已按上游补回。</li>
  *   <li>{@code getMaxHealth} 的权威血量分支保留，但本工程没有实现
  *       {@link IAuthoritativeHealth} 的实体（原版只有酒狐 Boss），因此实际不生效。</li>
  * </ul>
@@ -157,5 +160,32 @@ public abstract class LivingEntityMixin {
             }
         }
         return false;
+    }
+
+    /**
+     * 狐叶踏水/踏岩浆：让女仆（及带狐叶女仆附近的主人）能站在液体表面。
+     * <p>
+     * 对应上游 {@code 1.9.2.1} 的同类注入。1.18.2 的 {@code LivingEntity.canStandOnFluid(FluidState)}
+     * 存在，签名一致。
+     */
+    @Inject(method = "canStandOnFluid", at = @At("HEAD"), cancellable = true)
+    private void maidspell$allowWaterWalk(FluidState fluidState, CallbackInfoReturnable<Boolean> cir) {
+        Object self = this;
+        if (self instanceof Player player) {
+            if (FoxLeafOwnerEffectHelper.canOwnerStandOnFluid(player, fluidState)) {
+                cir.setReturnValue(true);
+            }
+            return;
+        }
+        if (!(self instanceof EntityMaid maid) || maid.isUnderWater()) {
+            return;
+        }
+        if (fluidState.is(FluidTags.WATER) && BaubleStateManager.hasBauble(maid, MaidSpellItems.FLOATING_FOX_LEAF)) {
+            cir.setReturnValue(true);
+            return;
+        }
+        if (fluidState.is(FluidTags.LAVA) && BaubleStateManager.hasBauble(maid, MaidSpellItems.MOLTEN_FOX_LEAF)) {
+            cir.setReturnValue(true);
+        }
     }
 }

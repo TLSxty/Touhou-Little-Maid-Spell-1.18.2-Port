@@ -1,5 +1,6 @@
 package com.github.yimeng261.maidspell;
 
+import com.github.yimeng261.maidspell.block.MaidSpellBlocks;
 import com.github.yimeng261.maidspell.effect.MaidSpellEffects;
 import com.github.yimeng261.maidspell.item.MaidSpellItems;
 import com.github.yimeng261.maidspell.particle.MaidSpellParticles;
@@ -29,6 +30,7 @@ public class MaidSpellMod {
 
     public MaidSpellMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        MaidSpellBlocks.register(modEventBus);
         MaidSpellItems.register(modEventBus);
         MaidSpellEffects.register(modEventBus);
         MaidSpellParticles.register(modEventBus);

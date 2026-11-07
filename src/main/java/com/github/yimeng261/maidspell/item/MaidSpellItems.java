@@ -6,8 +6,10 @@ import com.github.yimeng261.maidspell.item.bauble.chaosBook.ChaosBook;
 import com.github.yimeng261.maidspell.item.bauble.doubleHeartChain.DoubleHeartChain;
 import com.github.yimeng261.maidspell.item.bauble.dreamCatCrystal.DreamCatCrystal;
 import com.github.yimeng261.maidspell.item.bauble.flowCore.FlowCore;
+import com.github.yimeng261.maidspell.item.bauble.floatingFoxLeaf.FloatingFoxLeaf;
 import com.github.yimeng261.maidspell.item.bauble.fragrantIngenuity.FragrantIngenuity;
 import com.github.yimeng261.maidspell.item.bauble.hairpin.Hairpin;
+import com.github.yimeng261.maidspell.item.bauble.moltenFoxLeaf.MoltenFoxLeaf;
 import com.github.yimeng261.maidspell.item.bauble.rockCrystal.RockCrystal;
 import com.github.yimeng261.maidspell.item.bauble.silverCercis.SilverCercis;
 import com.github.yimeng261.maidspell.item.bauble.soulBook.SoulBook;
@@ -78,12 +80,14 @@ public class MaidSpellItems {
     // ---- 批次 B 第三档（遗留项） ----
     public static final RegistryObject<Item> STARANCHOR_PEARL =
             ITEMS.register("staranchor_pearl", StaranchorPearl::new);
+    public static final RegistryObject<Item> FLOATING_FOX_LEAF =
+            ITEMS.register("floating_fox_leaf", FloatingFoxLeaf::new);
+    public static final RegistryObject<Item> MOLTEN_FOX_LEAF =
+            ITEMS.register("molten_fox_leaf", MoltenFoxLeaf::new);
 
     // TODO(批次B 后续两档)：以下饰品需要连带搬入较大支撑类，本次未注册：
     //  · transmog_necklace    → 需要 TransmogNecklaceScreen（GUI）+ TransmogNecklaceMessage（网络）
-    //  · ender_pocket         → 需要 NetworkHandler + EnderPocketDataMessage + 客户端整合
-    //  · floating_fox_leaf    → 需要 MaidSpellBlocks（88 行）+ 9 个 block.custom.* + FoxLeafSurfaceHelper
-    //  · molten_fox_leaf      → 同上
+    //  · ender_pocket         → 按用户决策降级为「右键物品直接开末影箱」，不做女仆饰品
     //  · anchor_core          → 需要 ChunkLoadingManager（连带 the_retreat 维度链）
 
     private MaidSpellItems() {
