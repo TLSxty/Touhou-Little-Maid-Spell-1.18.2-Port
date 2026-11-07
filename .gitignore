@@ -21,3 +21,4 @@ libs/
 *.iml
 .idea/
 .vscode/
+build_out.txt
