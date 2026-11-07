@@ -270,7 +270,7 @@ public class DreamCatCrystalBauble implements IMaidBauble, IMaidBaubleLifecycle 
 
     private void applyDimensionBuffs(LivingEntity maid, ItemStack baubleStack) {
         if (TheRetreatDimension.isInRetreat(maid)) {
-            // TODO(批次B)：the_retreat 维度还没搬，isInRetreat 恒 false，此分支当前不会命中。
+            // 退隐维度内：女仆获得持续的短暂无敌刷新（刷新周期 20 tick，窗口 40 tick，可无缝衔接）。
             if (baubleStack != null) {
                 CompoundTag tag = baubleStack.getOrCreateTag();
                 tag.putInt(NBT_INVULNERABLE_TIME, Math.max(40, tag.getInt(NBT_INVULNERABLE_TIME)));
