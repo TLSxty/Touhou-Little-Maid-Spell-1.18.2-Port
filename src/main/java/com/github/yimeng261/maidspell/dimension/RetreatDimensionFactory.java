@@ -93,7 +93,9 @@ public final class RetreatDimensionFactory {
             throw new IllegalStateException("找不到维度类型 " + id + "，检查数据包 dimension_type 配置");
         }
 
-        long seed = server.overworld().getSeed();
+        // 注意：本方法在 createLevels 的 HEAD 被调用，此时 overworld 尚未创建，
+        // server.overworld() 返回 null（实测 NPE），种子只能从世界生成设置里取。
+        long seed = server.getWorldData().worldGenSettings().seed();
 
         // 生成器与数据包 dimension json 里的 noise + fixed biome 描述保持等价。
         Registry<StructureSet> structureSets = access.registryOrThrow(Registry.STRUCTURE_SET_REGISTRY);
