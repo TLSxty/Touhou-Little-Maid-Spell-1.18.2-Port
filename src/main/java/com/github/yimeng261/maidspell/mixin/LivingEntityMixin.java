@@ -97,8 +97,13 @@ public abstract class LivingEntityMixin {
         MaidDamageProcessor.MaidHealthChange healthChange =
                 MaidDamageProcessor.processMaidHealthDecrease(maid, health);
         if (healthChange.outcome() == MaidDamageProcessor.MaidHealthChange.Outcome.PASS) {
-            // 不是战斗掉血（外部模组直接 setHealth、指令改血等）：放行给原版写入，
-            // 不做任何拦截 —— 否则女仆会对一切非常规伤害无条件免疫。
+            // 不是战斗掉血（外部模组直接 setHealth、指令改血等），且女仆没有魂之书：
+            // 放行给原版写入，不做任何拦截 —— 否则女仆会对一切非常规伤害无条件免疫。
+            return;
+        }
+        if (healthChange.outcome() == MaidDamageProcessor.MaidHealthChange.Outcome.BLOCK) {
+            // 魂之书的「非常规伤害拦截」生效：拒绝这次写血，血量保持不变。
+            ci.cancel();
             return;
         }
         MaidHealthWriteGuard.runBypassing(() ->

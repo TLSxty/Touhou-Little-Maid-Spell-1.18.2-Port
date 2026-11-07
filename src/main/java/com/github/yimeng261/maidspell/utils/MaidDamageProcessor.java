@@ -33,6 +33,9 @@ public final class MaidDamageProcessor {
      *   <li>{@link Outcome#PASS}：本次写血不是战斗流程触发的（例如外部模组直接
      *       {@code setHealth}、指令改血），**放行**给原版写入，不做任何拦截。
      *       装饰性的减伤/免疫不适用于这类写血。</li>
+     *   <li>{@link Outcome#BLOCK}：本次写血被**拒绝**，血量保持不变。
+     *       唯一的来源是魂之书的饰品效果——「同时拦截玩家与女仆的非正常伤害结算链路」
+     *       （道具描述 {@code item.maidspell.soul_book.desc4}）。</li>
      *   <li>{@link Outcome#WRITE}：本次是战斗掉血，已走过饰品管线，由调用方写入
      *       {@link MaidHealthChange#health()} 给出的血量。</li>
      * </ul>
@@ -41,6 +44,8 @@ public final class MaidDamageProcessor {
         public enum Outcome {
             /** 放行：不拦截，原版照常写入。 */
             PASS,
+            /** 拒绝：本次写血被魂之书的「非常规伤害拦截」挡下，血量不变。 */
+            BLOCK,
             /** 由本模组写入指定血量。 */
             WRITE
         }
@@ -49,12 +54,21 @@ public final class MaidDamageProcessor {
             return new MaidHealthChange(Outcome.PASS, 0.0f);
         }
 
+        public static MaidHealthChange block() {
+            return new MaidHealthChange(Outcome.BLOCK, 0.0f);
+        }
+
         public static MaidHealthChange write(float health) {
             return new MaidHealthChange(Outcome.WRITE, health);
         }
 
         public boolean writeHealth() {
             return outcome == Outcome.WRITE;
+        }
+
+        /** 是否应当拒绝本次写血（血量保持不变）。 */
+        public boolean blockHealth() {
+            return outcome == Outcome.BLOCK;
         }
     }
 
@@ -79,10 +93,15 @@ public final class MaidDamageProcessor {
         processSilverCercis(maid, dataItem);
         if (!isCommonHurt(requestedHealth, maid)) {
             // 不是战斗流程触发的写血（外部模组直接 setHealth、指令改血等）：
-            // 放行给原版写入，不进饰品管线。
-            // 上游 1.20.1 在这里返回 block()（拒绝写入），但上游有权威血量系统与
-            // 真伤链兜底；本工程没有那套体系，若照抄会让女仆对一切非常规伤害无条件免疫。
-            // 饰品提供的减伤/免疫只作用于战斗伤害。
+            // 不进饰品管线（战斗减伤/吸血等不适用于这类写血）。
+            // 是否**拒绝**这次写血，取决于魂之书的饰品效果——道具描述写明
+            // 「同时拦截玩家与女仆的非正常伤害结算链路」（item.maidspell.soul_book.desc4）。
+            // 没有魂之书 → 放行（原版照常写入）；有魂之书 → 拒绝，血量不变。
+            // 上游 1.20.1 在这里无条件 block()，靠的是它自带的权威血量系统与真伤链兜底；
+            // 本工程没有那套体系，照抄会让女仆对一切非常规伤害无条件免疫。
+            if (BaubleStateManager.hasBauble(maid, MaidSpellItems.SOUL_BOOK)) {
+                return MaidHealthChange.block();
+            }
             return MaidHealthChange.pass();
         }
         processSoulBook(dataItem);
