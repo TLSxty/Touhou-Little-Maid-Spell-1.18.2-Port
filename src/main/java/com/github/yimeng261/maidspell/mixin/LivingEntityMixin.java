@@ -96,10 +96,13 @@ public abstract class LivingEntityMixin {
         }
         MaidDamageProcessor.MaidHealthChange healthChange =
                 MaidDamageProcessor.processMaidHealthDecrease(maid, health);
-        if (healthChange.writeHealth()) {
-            MaidHealthWriteGuard.runBypassing(() ->
-                    maid.getEntityData().set(DATA_HEALTH_ID, healthChange.health()));
+        if (healthChange.outcome() == MaidDamageProcessor.MaidHealthChange.Outcome.PASS) {
+            // 不是战斗掉血（外部模组直接 setHealth、指令改血等）：放行给原版写入，
+            // 不做任何拦截 —— 否则女仆会对一切非常规伤害无条件免疫。
+            return;
         }
+        MaidHealthWriteGuard.runBypassing(() ->
+                maid.getEntityData().set(DATA_HEALTH_ID, healthChange.health()));
         ci.cancel();
     }
 

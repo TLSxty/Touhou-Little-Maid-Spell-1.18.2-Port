@@ -102,16 +102,14 @@ public class Global {
 
     public static void resetCommonDamageCalc() {
         commonHurtHandlers.clear();
-        // 女仆与主人在本模组的伤害链里不再走原版 LivingHurtEvent 的计算，交由饰品的 baubleHurtHandlers 处理。
-        commonHurtHandlers.add((event, maid) -> {
-            LivingEntity entity = event.getEntityLiving();
-            if (entity instanceof EntityMaid) {
-                event.setCanceled(true);
-            } else if (entity instanceof Player) {
-                event.setCanceled(true);
-            }
-            return null;
-        });
+        // 上游 1.20.1 在这里注册了一条「女仆 / 玩家的 LivingHurtEvent 一律 cancel」的处理器，
+        // 用来把伤害交给 maidspell 自建的战斗管线接管。
+        // 本工程**不搬**那条自建管线（它依赖字节码 coremod + 权威血量系统），
+        // 若保留这条 cancel 就会变成「女仆与主人对一切常规伤害无条件免疫」。
+        // 因此这里保持为空列表：commonHurtHandlers 目前没有消费点，
+        // 属于「先占位、以后由饰品效果显式注册」的扩展位。
+        // 真正的伤害拦截只允许出现在有明确饰品来源的地方
+        // （如 Global.baubleHurtEventHandlers / baubleSetHealth*Handlers）。
     }
 
     public static Map<UUID, EntityMaid> getOrCreatePlayerMaidMap(UUID playerUUID) {

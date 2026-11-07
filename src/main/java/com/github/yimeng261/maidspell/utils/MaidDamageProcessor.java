@@ -27,13 +27,34 @@ public final class MaidDamageProcessor {
     private MaidDamageProcessor() {
     }
 
-    public record MaidHealthChange(boolean writeHealth, float health) {
-        public static MaidHealthChange block() {
-            return new MaidHealthChange(false, 0.0f);
+    /**
+     * 女仆血量写入的结果。
+     * <ul>
+     *   <li>{@link Outcome#PASS}：本次写血不是战斗流程触发的（例如外部模组直接
+     *       {@code setHealth}、指令改血），**放行**给原版写入，不做任何拦截。
+     *       装饰性的减伤/免疫不适用于这类写血。</li>
+     *   <li>{@link Outcome#WRITE}：本次是战斗掉血，已走过饰品管线，由调用方写入
+     *       {@link MaidHealthChange#health()} 给出的血量。</li>
+     * </ul>
+     */
+    public record MaidHealthChange(Outcome outcome, float health) {
+        public enum Outcome {
+            /** 放行：不拦截，原版照常写入。 */
+            PASS,
+            /** 由本模组写入指定血量。 */
+            WRITE
+        }
+
+        public static MaidHealthChange pass() {
+            return new MaidHealthChange(Outcome.PASS, 0.0f);
         }
 
         public static MaidHealthChange write(float health) {
-            return new MaidHealthChange(true, health);
+            return new MaidHealthChange(Outcome.WRITE, health);
+        }
+
+        public boolean writeHealth() {
+            return outcome == Outcome.WRITE;
         }
     }
 
@@ -57,7 +78,12 @@ public final class MaidDamageProcessor {
         DataItem dataItem = new DataItem(maid, current - requestedHealth);
         processSilverCercis(maid, dataItem);
         if (!isCommonHurt(requestedHealth, maid)) {
-            return MaidHealthChange.block();
+            // 不是战斗流程触发的写血（外部模组直接 setHealth、指令改血等）：
+            // 放行给原版写入，不进饰品管线。
+            // 上游 1.20.1 在这里返回 block()（拒绝写入），但上游有权威血量系统与
+            // 真伤链兜底；本工程没有那套体系，若照抄会让女仆对一切非常规伤害无条件免疫。
+            // 饰品提供的减伤/免疫只作用于战斗伤害。
+            return MaidHealthChange.pass();
         }
         processSoulBook(dataItem);
         applyBaubleHandlers(dataItem, maid);
