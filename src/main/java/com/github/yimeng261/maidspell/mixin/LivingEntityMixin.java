@@ -167,12 +167,19 @@ public abstract class LivingEntityMixin {
      * <p>
      * 对应上游 {@code 1.9.2.1} 的同类注入。1.18.2 的 {@code LivingEntity.canStandOnFluid(FluidState)}
      * 存在，签名一致。
+     * <p>
+     * <b>玩家侧必须分端：</b>玩家实际踩水的判定只在客户端 {@code travel} 里发生，
+     * 而 TLM 1.2.2 不把女仆饰品栏同步给客户端，所以客户端直接查饰品必然失败（表现为主人踩水穿下去）。
+     * 客户端改读服务端推送的 {@link com.github.yimeng261.maidspell.utils.FoxLeafSyncState}。
      */
     @Inject(method = "canStandOnFluid", at = @At("HEAD"), cancellable = true)
     private void maidspell$allowWaterWalk(FluidState fluidState, CallbackInfoReturnable<Boolean> cir) {
         Object self = this;
         if (self instanceof Player player) {
-            if (FoxLeafOwnerEffectHelper.canOwnerStandOnFluid(player, fluidState)) {
+            boolean allowed = player.getLevel().isClientSide()
+                    ? FoxLeafOwnerEffectHelper.canOwnerStandOnFluidSynced(player, fluidState)
+                    : FoxLeafOwnerEffectHelper.canOwnerStandOnFluid(player, fluidState);
+            if (allowed) {
                 cir.setReturnValue(true);
             }
             return;

@@ -33,6 +33,27 @@ public final class FoxLeafOwnerEffectHelper {
         return findSupportingMaid(owner, fluidTag) != null;
     }
 
+    /**
+     * 客户端专用：用服务端同步过来的状态判断主人能否站在液体表面。
+     *
+     * <p>{@link #canOwnerStandOnFluid} 依赖 {@code getMaidBauble()}，而 TLM 1.2.2 不会把女仆饰品栏
+     * 同步到客户端（只写在 NBT 里），所以客户端调用它必然返回 false —— 表现就是主人踩水直接穿下去。
+     * 这条路径改读 {@link FoxLeafSyncState}（服务端每 10 tick 算一次并推送）。</p>
+     */
+    public static boolean canOwnerStandOnFluidSynced(Player owner, FluidState fluidState) {
+        TagKey<Fluid> fluidTag = fluidTagForState(fluidState);
+        if (fluidTag == null || owner.isShiftKeyDown() || owner.isEyeInFluid(fluidTag)) {
+            return false;
+        }
+        if (fluidTag == FluidTags.WATER) {
+            return FoxLeafSyncState.hasFloating();
+        }
+        if (fluidTag == FluidTags.LAVA) {
+            return FoxLeafSyncState.hasMolten();
+        }
+        return false;
+    }
+
     public static boolean canApplyOwnerSurfaceMotion(Player owner, TagKey<Fluid> fluidTag) {
         return !owner.isShiftKeyDown() && !owner.isEyeInFluid(fluidTag);
     }

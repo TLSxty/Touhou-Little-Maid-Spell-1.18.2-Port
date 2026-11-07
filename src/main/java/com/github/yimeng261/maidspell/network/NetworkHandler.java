@@ -1,6 +1,7 @@
 package com.github.yimeng261.maidspell.network;
 
 import com.github.yimeng261.maidspell.Config;
+import com.github.yimeng261.maidspell.network.message.FoxLeafStateMessage;
 import com.github.yimeng261.maidspell.network.message.TransmogNecklaceMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
@@ -28,5 +29,9 @@ public final class NetworkHandler {
                 TransmogNecklaceMessage::encode,
                 TransmogNecklaceMessage::decode,
                 TransmogNecklaceMessage::handle);
+        CHANNEL.registerMessage(id++, FoxLeafStateMessage.class,
+                FoxLeafStateMessage::encode,
+                FoxLeafStateMessage::decode,
+                FoxLeafStateMessage::handle);
     }
 }
