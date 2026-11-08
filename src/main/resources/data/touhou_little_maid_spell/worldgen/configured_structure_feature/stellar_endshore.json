@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:stellar_endshore",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:stellar_endshore_start_pool",
+    "size": 7
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/stellar_endshore",
+  "adapt_noise": false,
+  "spawn_overrides": {}
+}

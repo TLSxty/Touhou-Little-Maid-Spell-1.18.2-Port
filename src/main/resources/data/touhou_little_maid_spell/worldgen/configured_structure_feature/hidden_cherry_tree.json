@@ -1,0 +1,7 @@
+{
+  "type": "touhou_little_maid_spell:hidden_cherry_tree",
+  "config": {},
+  "biomes": "#touhou_little_maid_spell:has_structure/hidden_cherry_tree",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}

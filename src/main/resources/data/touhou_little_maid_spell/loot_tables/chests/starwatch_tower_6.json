@@ -1,0 +1,158 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 4,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book"
+        }
+      ]
+    },
+    {
+      "rolls": 4,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:paper"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 10
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 90
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:paper",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 85
+        }
+      ]
+    }
+  ]
+}

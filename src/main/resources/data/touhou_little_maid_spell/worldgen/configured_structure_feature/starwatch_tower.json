@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:starwatch_tower",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:starwatch_tower_start_pool",
+    "size": 4
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/starwatch_tower",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}
