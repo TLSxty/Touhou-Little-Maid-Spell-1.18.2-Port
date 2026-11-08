@@ -5,11 +5,13 @@ import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -40,9 +42,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  *   <li>{@code RandomSource} → {@code java.util.Random}；{@code org.joml.Vector3f} →
  *       {@code com.mojang.math.Vector3f}。</li>
  *   <li>模型父由 {@code flowerbed_N} 改为本工程自建的 {@code petal_bed_N}（见 assets）。</li>
+ *   <li>原文的骨粉交互继承自 {@code PinkPetalsBlock}，改写后改为显式实现
+ *       {@link BonemealableBlock}：未满 4 朵时可催熟，每次 +1 朵。</li>
  * </ul>
  */
-public class StarGlowFlowerClusterBlock extends BushBlock {
+public class StarGlowFlowerClusterBlock extends BushBlock implements BonemealableBlock {
 
     /** 发光等级。 */
     private static final int LIGHT_LEVEL = 10;
@@ -112,5 +116,32 @@ public class StarGlowFlowerClusterBlock extends BushBlock {
         Vector3f color = random.nextBoolean() ? BLUE_GLOW : PURPLE_GLOW;
         level.addParticle(new DustParticleOptions(color, 0.75f),
                 x, y, z, 0.0, 0.004 + random.nextDouble() * 0.006, 0.0);
+    }
+
+    // ------------------------------------------------------------------
+    // 骨粉交互
+    //
+    // 原文依赖 1.20 的 PinkPetalsBlock 自带的 BonemealableBlock 实现，
+    // 该类在 1.18.2 不存在，改写为 BushBlock 时这套实现也被一并丢掉，
+    // 表现为「骨粉右键没反应」。这里按 PinkPetalsBlock 的原语义补回：
+    //   未满 4 朵时可用骨粉；每次催熟把 flower_amount 加 1；已满则不消耗。
+    // ------------------------------------------------------------------
+
+    @Override
+    public boolean isValidBonemealTarget(BlockGetter level, BlockPos pos, BlockState state, boolean isClient) {
+        return state.getValue(FLOWER_AMOUNT) < 4;
+    }
+
+    @Override
+    public boolean isBonemealSuccess(Level level, Random random, BlockPos pos, BlockState state) {
+        return true;
+    }
+
+    @Override
+    public void performBonemeal(ServerLevel level, Random random, BlockPos pos, BlockState state) {
+        int amount = state.getValue(FLOWER_AMOUNT);
+        if (amount < 4) {
+            level.setBlock(pos, state.setValue(FLOWER_AMOUNT, amount + 1), Block.UPDATE_CLIENTS);
+        }
     }
 }
