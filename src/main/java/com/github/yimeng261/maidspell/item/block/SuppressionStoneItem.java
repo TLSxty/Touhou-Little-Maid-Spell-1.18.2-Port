@@ -1,5 +1,6 @@
 package com.github.yimeng261.maidspell.item.block;
 
+import com.github.yimeng261.maidspell.item.MaidSpellCreativeTab;
 import com.github.yimeng261.maidspell.utils.TooltipHelper;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -23,7 +24,7 @@ import net.minecraft.world.level.block.Block;
 public class SuppressionStoneItem extends BlockItem {
 
     public SuppressionStoneItem(Block block) {
-        super(block, new Item.Properties());
+        super(block, new Item.Properties().tab(MaidSpellCreativeTab.BAUBLE_TAB));
     }
 
     @Override

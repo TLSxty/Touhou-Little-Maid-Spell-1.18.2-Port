@@ -1,5 +1,6 @@
 package com.github.yimeng261.maidspell.item.block;
 
+import com.github.yimeng261.maidspell.item.MaidSpellCreativeTab;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -23,7 +24,7 @@ import net.minecraft.world.level.block.Block;
 public class StarGlowFlowerClusterItem extends BlockItem {
 
     public StarGlowFlowerClusterItem(Block block) {
-        super(block, new Item.Properties());
+        super(block, new Item.Properties().tab(MaidSpellCreativeTab.BAUBLE_TAB));
     }
 
     @Override
