@@ -1,6 +1,7 @@
 package com.github.yimeng261.maidspell.item;
 
 import com.github.yimeng261.maidspell.Config;
+import com.github.yimeng261.maidspell.block.MaidSpellBlocks;
 import com.github.yimeng261.maidspell.item.bauble.bleedingHeart.BleedingHeart;
 import com.github.yimeng261.maidspell.item.bauble.chaosBook.ChaosBook;
 import com.github.yimeng261.maidspell.item.bauble.doubleHeartChain.DoubleHeartChain;
@@ -19,6 +20,11 @@ import com.github.yimeng261.maidspell.item.bauble.springRing.SpringRing;
 import com.github.yimeng261.maidspell.item.bauble.staranchorPearl.StaranchorPearl;
 import com.github.yimeng261.maidspell.item.bauble.transmogNecklace.TransmogNecklace;
 import com.github.yimeng261.maidspell.item.bauble.woundRimeBlade.WoundRimeBlade;
+import com.github.yimeng261.maidspell.item.block.JingxuYoulanItem;
+import com.github.yimeng261.maidspell.item.block.ScarletZhuhuaItem;
+import com.github.yimeng261.maidspell.item.block.StarGlowFlowerClusterItem;
+import com.github.yimeng261.maidspell.item.block.SuppressionStoneItem;
+import com.github.yimeng261.maidspell.item.block.YueLinglanItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -94,6 +100,25 @@ public class MaidSpellItems {
 
     // TODO(批次B 后续两档)：以下饰品需要连带搬入较大支撑类，本次未注册：
     //  · anchor_core          → 需要 ChunkLoadingManager（连带 the_retreat 维度链）
+
+    // ---- P3 批次 0：建筑装饰方块对应的物品 ----
+    /** 猩红朱华：绯红菌岩上开的花，给周围生物力量并对非女仆施加凋零。 */
+    public static final RegistryObject<Item> SCARLET_ZHUHUA =
+            ITEMS.register("scarlet_zhuhua", () -> new ScarletZhuhuaItem(MaidSpellBlocks.SCARLET_ZHUHUA.get()));
+    /** 月铃兰：发光花，给周围女仆生命恢复与抗性，并朝精灵领域撒光尘。 */
+    public static final RegistryObject<Item> YUE_LINGLAN =
+            ITEMS.register("yue_linglan", () -> new YueLinglanItem(MaidSpellBlocks.YUE_LINGLAN.get()));
+    /** 净墟幽兰：净化女仆负面效果、清空其他生物全部药水效果。 */
+    public static final RegistryObject<Item> JINGXU_YOULAN =
+            ITEMS.register("jingxu_youlan", () -> new JingxuYoulanItem(MaidSpellBlocks.JINGXU_YOULAN.get()));
+    /** 星荧花簇：贴地发光花瓣堆。 */
+    public static final RegistryObject<Item> STAR_GLOW_FLOWER_CLUSTER =
+            ITEMS.register("star_glow_flower_cluster",
+                    () -> new StarGlowFlowerClusterItem(MaidSpellBlocks.STAR_GLOW_FLOWER_CLUSTER.get()));
+    /** 镇石：标记区块，压制附近月铃兰的光尘尾迹。 */
+    public static final RegistryObject<Item> SUPPRESSION_STONE =
+            ITEMS.register("suppression_stone",
+                    () -> new SuppressionStoneItem(MaidSpellBlocks.SUPPRESSION_STONE.get()));
 
     private MaidSpellItems() {
     }

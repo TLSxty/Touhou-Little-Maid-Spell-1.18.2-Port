@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "touhou_little_maid_spell:jingxu_youlan"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

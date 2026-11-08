@@ -1,0 +1,7 @@
+{
+  "parent": "touhou_little_maid_spell:block/petal_bed_3",
+  "textures": {
+    "flowerbed": "touhou_little_maid_spell:block/blue_petals",
+    "stem": "touhou_little_maid_spell:block/blue_petals_stem"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "textures": {
+    "particle": "#flowerbed"
+  },
+  "elements": [
+    {
+      "from": [2.5, 0.1, 2.5],
+      "to": [13.5, 0.6, 13.5],
+      "faces": {
+        "up": { "uv": [0, 0, 16, 16], "texture": "#flowerbed" }
+      }
+    }
+  ]
+}
