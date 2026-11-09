@@ -1,5 +1,6 @@
 package com.github.yimeng261.maidspell.worldgen.structure;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
@@ -10,10 +11,15 @@ import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGenerator;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplier;
+import net.minecraft.world.level.levelgen.structure.pools.EmptyPoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import org.slf4j.Logger;
 
 import java.util.Optional;
 
@@ -45,6 +51,8 @@ public class StellarEndshoreStructure extends StructureFeature<JigsawConfigurati
     private static final int HEIGHT_JITTER = 5;
 
     private static final ThreadLocal<BlockPos> FIXED_ANCHOR = new ThreadLocal<>();
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public StellarEndshoreStructure() {
         super(JigsawConfiguration.CODEC, StellarEndshoreStructure::createGenerator);
@@ -98,13 +106,36 @@ public class StellarEndshoreStructure extends StructureFeature<JigsawConfigurati
                 heightAccessor.getMaxBuildHeight() - MAX_STRUCTURE_HEIGHT);
 
         BlockPos startPos = new BlockPos(x, y, z);
-        return JigsawPlacement.addPieces(
+
+        // --- 临时诊断日志（定位固定刷新 start.isValid() 为假的原因，定位后删除）---
+        if (anchor != null) {
+            try {
+                StructureTemplatePool pool = context.config().startPool().value();
+                WorldgenRandom probe = new WorldgenRandom(new LegacyRandomSource(0L));
+                probe.setLargeFeatureSeed(context.seed(), chunkPos.x, chunkPos.z);
+                StructurePoolElement element = pool.getRandomTemplate(probe);
+                LOGGER.info("[诊断] 星途终岸 createGenerator：anchor={} startPos={} poolName={} poolSize={} element={} isEmpty={} biomeValid={}",
+                        anchor, startPos, pool.getName(), pool.size(),
+                        element.getClass().getName(),
+                        element == EmptyPoolElement.INSTANCE,
+                        context.validBiomeOnTop(Heightmap.Types.WORLD_SURFACE_WG));
+            } catch (Throwable t) {
+                LOGGER.error("[诊断] 星途终岸 createGenerator 探测异常", t);
+            }
+        }
+        // --- 诊断日志结束 ---
+
+        Optional<PieceGenerator<JigsawConfiguration>> result = JigsawPlacement.addPieces(
                 context,
                 (structureManager, element, pos, groundLevelDelta, rotation, box) ->
                         new PoolElementStructurePiece(structureManager, element, pos, groundLevelDelta, rotation, box),
                 startPos,
                 false,
                 false);
+        if (anchor != null) {
+            LOGGER.info("[诊断] 星途终岸 createGenerator 结果 present={}", result.isPresent());
+        }
+        return result;
     }
 
     @Override
