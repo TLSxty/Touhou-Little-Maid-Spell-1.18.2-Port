@@ -101,7 +101,7 @@ public final class MaidSpellStructures {
      * 按用户 m03259 决策 D2 补注册为独立结构，否则这批 nbt 完全不可见。</p>
      */
     public static final RegistryObject<StructureFeature<?>> ENCHANTRESS_FOOTSTEPS_WOODS_PERCH =
-            STRUCTURE_FEATURES.register("enchantress_footsteps_woods_perch",
+            STRUCTURE_FEATURES.register("woods_perch",
                     EnchantressFootstepsStructure::new);
 
     private MaidSpellStructures() {
