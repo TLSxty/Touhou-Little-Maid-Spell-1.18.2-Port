@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:enchantress_footsteps_oasis",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:enchantress_footsteps_oasis_start_pool",
+    "size": 1
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/enchantress_footsteps_oasis",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}

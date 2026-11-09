@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:enchantress_footsteps_mushroom_fields",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:enchantress_footsteps/mushroom_fields",
+    "size": 1
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/enchantress_footsteps_mushroom_fields",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}

@@ -34,9 +34,16 @@ import java.util.function.Function;
  *   <li>1.18.2 的反序列化构造只接收 {@code (StructureManager, CompoundTag)}，不是
  *       {@code StructurePieceSerializationContext}——见 {@link MaidSpellStructurePieceTypes}；</li>
  *   <li>{@code StructureManager#get} 返回 {@code Optional<StructureTemplate>}，调用方自行判空。</li>
+ *   <li><b>补了 rotation 持久化</b>（1.18.2 的 {@code TemplateStructurePiece#addAdditionalSaveData}
+ *       只写 {@code TPX/TPY/TPZ/Template} 四个键，<b>不存 rotation</b>）：若不补，区块重载后
+ *       反序列化构造拿到的永远是 {@link Rotation#NONE}，随机旋转过的结构会转回 0°。
+ *       这里自建 NBT 键 {@value #TAG_ROTATION} 保存 {@link Rotation#name()}。</li>
  * </ul>
  */
 public class SingleTemplatePiece extends TemplateStructurePiece {
+
+    /** 自建键：1.18.2 父类的 {@code addAdditionalSaveData} 不保存 rotation。 */
+    private static final String TAG_ROTATION = "MaidSpellRotation";
 
     public SingleTemplatePiece(StructureManager structureManager, ResourceLocation templateLocation,
                                BlockPos pos, Rotation rotation) {
@@ -46,7 +53,25 @@ public class SingleTemplatePiece extends TemplateStructurePiece {
 
     public SingleTemplatePiece(StructureManager structureManager, CompoundTag tag) {
         super(MaidSpellStructurePieceTypes.SINGLE_TEMPLATE_PIECE.get(), tag, structureManager,
-                (Function<ResourceLocation, StructurePlaceSettings>) location -> makeSettings(Rotation.NONE));
+                (Function<ResourceLocation, StructurePlaceSettings>) location -> makeSettings(readRotation(tag)));
+    }
+
+    /** 从存档里读回旋转；缺失或非法时退回 {@link Rotation#NONE}。 */
+    private static Rotation readRotation(CompoundTag tag) {
+        if (!tag.contains(TAG_ROTATION)) {
+            return Rotation.NONE;
+        }
+        try {
+            return Rotation.valueOf(tag.getString(TAG_ROTATION));
+        } catch (IllegalArgumentException e) {
+            return Rotation.NONE;
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag) {
+        super.addAdditionalSaveData(context, tag);
+        tag.putString(TAG_ROTATION, getRotation().name());
     }
 
     private static StructurePlaceSettings makeSettings(Rotation rotation) {

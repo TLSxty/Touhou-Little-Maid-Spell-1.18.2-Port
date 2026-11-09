@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:woods_perch",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:enchantress_footsteps/woods_perch",
+    "size": 1
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/woods_perch",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}

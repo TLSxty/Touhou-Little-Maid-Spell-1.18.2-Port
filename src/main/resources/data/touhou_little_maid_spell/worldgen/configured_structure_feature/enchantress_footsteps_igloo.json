@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:enchantress_footsteps_igloo",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:enchantress_footsteps/igloo",
+    "size": 1
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/enchantress_footsteps_igloo",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}
