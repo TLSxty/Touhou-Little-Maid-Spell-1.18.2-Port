@@ -1,7 +1,9 @@
 package com.github.yimeng261.maidspell.worldgen;
 
 import com.github.yimeng261.maidspell.MaidSpellMod;
+import com.github.yimeng261.maidspell.worldgen.structure.FallenSanctumStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.HiddenCherryTreeStructure;
+import com.github.yimeng261.maidspell.worldgen.structure.RelicSanctumStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.StarwatchTowerStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.StellarEndshoreStructure;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
@@ -35,6 +37,19 @@ public final class MaidSpellStructures {
     /** 批次 1：星途终岸（末地拼图，带固定锚点）。 */
     public static final RegistryObject<StructureFeature<?>> STELLAR_ENDSHORE =
             STRUCTURE_FEATURES.register("stellar_endshore", StellarEndshoreStructure::new);
+
+    /** 批次 2：陨落圣殿（下界拼图，自己找净空地表）。 */
+    public static final RegistryObject<StructureFeature<?>> FALLEN_SANCTUM =
+            STRUCTURE_FEATURES.register("fallen_sanctum", FallenSanctumStructure::new);
+
+    /**
+     * 批次 2：遗物圣所（地表拼图，只挑平坦高地）。
+     *
+     * <p>精灵领域（elven_realm）在上游 json 里 {@code type} 也写成本注册项（上游笔误），
+     * 通过各自的 {@code start_pool} 区分，故本工程保持与上游一致，不为精灵领域另建类。</p>
+     */
+    public static final RegistryObject<StructureFeature<?>> RELIC_SANCTUM =
+            STRUCTURE_FEATURES.register("relic_sanctum", RelicSanctumStructure::new);
 
     private MaidSpellStructures() {
     }

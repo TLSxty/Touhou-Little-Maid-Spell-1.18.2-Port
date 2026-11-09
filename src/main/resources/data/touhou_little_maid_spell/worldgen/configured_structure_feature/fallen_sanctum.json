@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:fallen_sanctum",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:fallen_sanctum_start_pool",
+    "size": 7
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/fallen_sanctum",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}
