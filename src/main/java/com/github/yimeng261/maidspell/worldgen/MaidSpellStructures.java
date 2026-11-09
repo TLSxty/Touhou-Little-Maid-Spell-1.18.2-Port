@@ -5,6 +5,7 @@ import com.github.yimeng261.maidspell.worldgen.structure.EnchantressFootstepsStr
 import com.github.yimeng261.maidspell.worldgen.structure.FallenSanctumStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.HiddenCherryTreeStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.RelicSanctumStructure;
+import com.github.yimeng261.maidspell.worldgen.structure.StarfallGardenStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.StarwatchTowerStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.StellarEndshoreStructure;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
@@ -103,6 +104,17 @@ public final class MaidSpellStructures {
     public static final RegistryObject<StructureFeature<?>> ENCHANTRESS_FOOTSTEPS_WOODS_PERCH =
             STRUCTURE_FEATURES.register("woods_perch",
                     EnchantressFootstepsStructure::new);
+
+    /**
+     * 批次 4：星落之庭（浮空花园，一存档一座）。
+     *
+     * <p>上游是 12 段拼图；本工程按用户 m03661 决策 D1 = B，构建期已把 12 段按 jigsaw
+     * {@code orientation} 精确合并成单模板 {@code starfall_garden/starfall_garden_merged}，
+     * 运行期走 {@link SingleTemplatePiece}。门控（一存档一座）由
+     * {@code StarfallGardenData} 承担；不搬旧存档回填（D2 = B）。</p>
+     */
+    public static final RegistryObject<StructureFeature<?>> STARFALL_GARDEN =
+            STRUCTURE_FEATURES.register("starfall_garden", StarfallGardenStructure::new);
 
     private MaidSpellStructures() {
     }

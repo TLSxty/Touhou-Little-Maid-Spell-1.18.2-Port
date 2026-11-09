@@ -1,0 +1,7 @@
+{
+  "type": "touhou_little_maid_spell:starfall_garden",
+  "config": {},
+  "biomes": "#touhou_little_maid_spell:has_structure/starfall_garden",
+  "adapt_noise": false,
+  "spawn_overrides": {}
+}

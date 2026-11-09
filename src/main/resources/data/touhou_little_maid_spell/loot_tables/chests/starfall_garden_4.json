@@ -22,7 +22,13 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:firework_rocket",
-          "weight": 1
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Fireworks:{Flight:1b}}"
+            }
+          ]
         }
       ]
     },
