@@ -23,6 +23,7 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * 让旧存档也能拥有 the_retreat 维度。
@@ -58,30 +59,44 @@ public final class RetreatDimensionFactory {
         ResourceKey<LevelStem> stemKey = ResourceKey.create(Registry.LEVEL_STEM_REGISTRY, id);
 
         Registry<LevelStem> dimensions = server.getWorldData().worldGenSettings().dimensions();
-        if (dimensions.containsKey(stemKey)) {
-            return false;
-        }
         if (!(dimensions instanceof WritableRegistry<LevelStem> writable)) {
             Global.LOGGER.error("[maidspell] 无法补建退隐维度 {}：WorldGenSettings.dimensions 不是可写注册表（{}）",
                     id, dimensions.getClass().getName());
             return false;
         }
+
+        boolean present = dimensions.containsKey(stemKey);
+        LevelStem existing = present ? dimensions.get(stemKey) : null;
+        if (existing != null && existing.generator() instanceof RetreatChunkGenerator) {
+            return false;
+        }
+
         try {
             // 从 level.dat 解码出来的注册表通常是冻结状态，先解冻才能写入。
             if (dimensions instanceof MappedRegistry<LevelStem> mapped) {
                 mapped.unfreeze();
             }
-            LevelStem stem = buildStem(server);
-            writable.register(stemKey, stem, Lifecycle.stable());
-            Global.LOGGER.info("[maidspell] 已补建退隐维度 {}（存档建立时该维度尚不存在，本次已写入世界生成设置）", id);
+            // 🔴 关键：level.dat 里的 LevelStem 是用 codec 解出来的，解码产物永远是原版
+            // NoiseBasedChunkGenerator（RetreatChunkGenerator.codec() 继承自它，仍报 minecraft:noise）。
+            // 所以「已存在就跳过」是错的 —— 旧存档每开一次服都必须把生成器换成我们的子类，
+            // 否则 structure 白名单不生效。registerOrOverride 沿用同 id，不会打乱注册表。
+            LevelStem stem = buildStem(server, existing);
+            if (present) {
+                writable.registerOrOverride(OptionalInt.empty(), stemKey, stem, Lifecycle.stable());
+                Global.LOGGER.info("[maidspell] 已把退隐维度 {} 的生成器替换为 RetreatChunkGenerator"
+                        + "（只允许 hidden_retreat 结构集参与分布）", id);
+            } else {
+                writable.register(stemKey, stem, Lifecycle.stable());
+                Global.LOGGER.info("[maidspell] 已补建退隐维度 {}（存档建立时该维度尚不存在，本次已写入世界生成设置）", id);
+            }
             return true;
         } catch (Exception e) {
-            Global.LOGGER.error("[maidspell] 补建退隐维度 {} 失败", id, e);
+            Global.LOGGER.error("[maidspell] 补建/替换退隐维度 {} 失败", id, e);
             return false;
         }
     }
 
-    private static LevelStem buildStem(MinecraftServer server) {
+    private static LevelStem buildStem(MinecraftServer server, LevelStem existing) {
         ResourceLocation id = TheRetreatDimension.getSharedRetreatDimension().location();
         RegistryAccess.Frozen access = server.registryAccess();
 
@@ -105,14 +120,17 @@ public final class RetreatDimensionFactory {
                 access.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
 
         FixedBiomeSource biomeSource = new FixedBiomeSource(biomes.getHolderOrThrow(Biomes.FLOWER_FOREST));
-        ChunkGenerator generator = new NoiseBasedChunkGenerator(
+        // 用 RetreatChunkGenerator 而不是原版 NoiseBasedChunkGenerator：
+        // 原版会把全量结构集都纳入分布，配合固定 flower_forest 群系源，表现为
+        // 「主世界和各模组的建筑全都长在退隐维度里」。见 RetreatChunkGenerator 的类注释。
+        ChunkGenerator generator = new RetreatChunkGenerator(
                 structureSets,
                 noises,
                 biomeSource,
                 seed,
                 noiseSettings.getHolderOrThrow(NoiseGeneratorSettings.OVERWORLD));
 
-        return new LevelStem(typeHolder.get(), generator);
+        return new LevelStem(typeHolder.get(), generator, existing != null && existing.useServerSeed());
     }
 
     /** 供日志/调试使用：描述当前维度是否已就绪。 */

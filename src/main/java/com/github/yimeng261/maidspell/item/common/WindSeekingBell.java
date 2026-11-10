@@ -1,6 +1,7 @@
 package com.github.yimeng261.maidspell.item.common;
 
 import com.github.yimeng261.maidspell.Config;
+import com.github.yimeng261.maidspell.dimension.RetreatChunkTickets;
 import com.github.yimeng261.maidspell.dimension.TheRetreatDimension;
 import com.github.yimeng261.maidspell.item.MaidSpellCreativeTab;
 import com.github.yimeng261.maidspell.sound.MaidSpellSounds;
@@ -168,12 +169,10 @@ public class WindSeekingBell extends Item {
 
         BlockPos structurePos = found.getFirst();
         // 传送前强制加载 5×5 区块，否则 /tp 过去是未生成的虚空。
-        for (int dx = -FORCE_LOAD_RADIUS; dx <= FORCE_LOAD_RADIUS; dx++) {
-            for (int dz = -FORCE_LOAD_RADIUS; dz <= FORCE_LOAD_RADIUS; dz++) {
-                retreatLevel.setChunkForced(
-                        (structurePos.getX() >> 4) + dx, (structurePos.getZ() >> 4) + dz, true);
-            }
-        }
+        // 必须走 RetreatChunkTickets —— 它会排定 15 秒后自动解除；直接调 setChunkForced
+        // 会把这片区块永久钉在存档里（上游有 unforceLoadStructureChunks，本版自建）。
+        RetreatChunkTickets.forceTemporarily(retreatLevel, structurePos, FORCE_LOAD_RADIUS,
+                RetreatChunkTickets.DEFAULT_LIFETIME_TICKS);
 
         int surfaceY = retreatLevel.getChunkSource().getGenerator().getBaseHeight(
                 structurePos.getX(), structurePos.getZ(),
