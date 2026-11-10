@@ -20,6 +20,7 @@ import com.github.yimeng261.maidspell.item.bauble.springRing.SpringRing;
 import com.github.yimeng261.maidspell.item.bauble.staranchorPearl.StaranchorPearl;
 import com.github.yimeng261.maidspell.item.bauble.transmogNecklace.TransmogNecklace;
 import com.github.yimeng261.maidspell.item.bauble.woundRimeBlade.WoundRimeBlade;
+import com.github.yimeng261.maidspell.item.common.WindSeekingBell;
 import com.github.yimeng261.maidspell.item.block.JingxuYoulanItem;
 import com.github.yimeng261.maidspell.item.block.ScarletZhuhuaItem;
 import com.github.yimeng261.maidspell.item.block.StarGlowFlowerClusterItem;
@@ -119,6 +120,16 @@ public class MaidSpellItems {
     public static final RegistryObject<Item> SUPPRESSION_STONE =
             ITEMS.register("suppression_stone",
                     () -> new SuppressionStoneItem(MaidSpellBlocks.SUPPRESSION_STONE.get()));
+
+    // ---- P3 批次 5：退隐维度与隐世之境的入口 ----
+    /**
+     * 寻风之铃：进入共享退隐维度 / 搜索最近的隐世之境 / Shift 返回主世界。
+     *
+     * <p>上游是「进维度 + 搜结构」的唯一玩家入口；不搬它则隐世之境生成得再好，
+     * 玩家也无从抵达（见 {@code docs/P3_批次5核验.md} 结论 2）。</p>
+     */
+    public static final RegistryObject<Item> WIND_SEEKING_BELL =
+            ITEMS.register("wind_seeking_bell", WindSeekingBell::new);
 
     private MaidSpellItems() {
     }

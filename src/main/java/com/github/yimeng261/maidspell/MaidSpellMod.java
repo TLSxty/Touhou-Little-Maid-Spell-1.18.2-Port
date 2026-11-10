@@ -7,6 +7,7 @@ import com.github.yimeng261.maidspell.effect.MaidSpellEffects;
 import com.github.yimeng261.maidspell.item.MaidSpellItems;
 import com.github.yimeng261.maidspell.network.NetworkHandler;
 import com.github.yimeng261.maidspell.particle.MaidSpellParticles;
+import com.github.yimeng261.maidspell.sound.MaidSpellSounds;
 import com.github.yimeng261.maidspell.worldgen.MaidSpellStructurePieceTypes;
 import com.github.yimeng261.maidspell.worldgen.MaidSpellStructures;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -45,6 +46,7 @@ public class MaidSpellMod {
         MaidSpellParticles.register(modEventBus);
         MaidSpellStructures.register(modEventBus);
         MaidSpellStructurePieceTypes.register(modEventBus);
+        MaidSpellSounds.register(modEventBus);
         NetworkHandler.register();
         modEventBus.addListener(this::commonSetup);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.BAUBLES_SPEC, "touhou_little_maid_spell-baubles.toml");

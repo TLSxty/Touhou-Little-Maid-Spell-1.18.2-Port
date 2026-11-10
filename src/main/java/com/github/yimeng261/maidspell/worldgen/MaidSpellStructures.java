@@ -4,6 +4,7 @@ import com.github.yimeng261.maidspell.MaidSpellMod;
 import com.github.yimeng261.maidspell.worldgen.structure.EnchantressFootstepsStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.FallenSanctumStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.HiddenCherryTreeStructure;
+import com.github.yimeng261.maidspell.worldgen.structure.HiddenRetreatStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.RelicSanctumStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.StarfallGardenStructure;
 import com.github.yimeng261.maidspell.worldgen.structure.StarwatchTowerStructure;
@@ -115,6 +116,17 @@ public final class MaidSpellStructures {
      */
     public static final RegistryObject<StructureFeature<?>> STARFALL_GARDEN =
             STRUCTURE_FEATURES.register("starfall_garden", StarfallGardenStructure::new);
+
+    /**
+     * 批次 5：隐世之境（{@code hidden_retreat}）。
+     *
+     * <p>唯一一个<b>只在自己的退隐维度里生成</b>的结构：门控写在
+     * {@link HiddenRetreatStructure#createGenerator} 内（D2 = PieceGenerator 单点），
+     * 主世界与其他维度一律返回空。数据侧 9 段 nbt 走 jigsaw，{@code size} 从上游的 20
+     * 降到 7（1.18.2 {@code JigsawConfiguration.CODEC} 硬上限）。</p>
+     */
+    public static final RegistryObject<StructureFeature<?>> HIDDEN_RETREAT =
+            STRUCTURE_FEATURES.register("hidden_retreat", HiddenRetreatStructure::new);
 
     private MaidSpellStructures() {
     }

@@ -1,0 +1,10 @@
+{
+  "type": "touhou_little_maid_spell:hidden_retreat",
+  "config": {
+    "start_pool": "touhou_little_maid_spell:hidden_retreat_start_pool",
+    "size": 7
+  },
+  "biomes": "#touhou_little_maid_spell:has_structure/hidden_retreat",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}
