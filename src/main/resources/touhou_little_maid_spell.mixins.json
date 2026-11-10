@@ -16,7 +16,8 @@
     "accessor.LivingEntityInvoker",
     "accessor.NodeEvaluatorAccessor",
     "tlm.AltarRecipeSerializerMixin",
-    "tlm.MaidFeedOwnerTaskMixin"
+    "tlm.MaidFeedOwnerTaskMixin",
+    "tlm.EntityMaidStructureSpawnMixin"
   ],
   "client": [],
   "server": [],

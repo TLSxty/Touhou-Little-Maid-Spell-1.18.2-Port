@@ -37,8 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class RetreatChunkTickets {
 
-    /** 票据存活时长（tick，15 秒）。足够玩家点开聊天栏的 /tp 并完成传送。 */
-    public static final int DEFAULT_LIFETIME_TICKS = 300;
+    /** 票据存活时长（tick，5 秒）。够客户端收到区块数据、玩家完成一次 /tp；再长只是白白拖慢主线程。 */
+    public static final int DEFAULT_LIFETIME_TICKS = 100;
 
     /** 维度 id → 已加票区块（{@link ChunkPos#toLong()}）集合。 */
     private static final Map<ResourceKey<Level>, Set<Long>> ACTIVE = new ConcurrentHashMap<>();
