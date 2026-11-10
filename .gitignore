@@ -1,6 +1,10 @@
 # ---- 原始输入 jar（用于反编译的 1.9.2.1 all 包，不入库）----
 \[车万女仆：万法皆通\] touhou_little_maid_spell-1.9.2.1-forge+mc1.20.1-all.jar
 
+# ---- 内部文档（不上传公开仓库，只留在本地）----
+docs/
+AGENTS.md
+
 # ---- 临时取证物（收尾清理）----
 _decompile/
 _spell.zip

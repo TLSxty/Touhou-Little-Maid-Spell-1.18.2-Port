@@ -1,13 +1,22 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
+# MIT：本移植整体按 MIT 发布。上游 Touhou Little Maid: Spell 亦声明 MIT（见其 mods.toml）。
 license = "MIT"
+issueTrackerURL = "https://github.com/TLSxty/Touhou-Little-Maid-Spell-1.18.2-Port/issues"
 
 [[mods]]
 modId = "touhou_little_maid_spell"
 version = "1.9.2.1-forge+mc1.18.2-PORT"
 displayName = "Touhou Little Maid: Spell (1.18.2 Port)"
-authors = "DreamCat"
-description = '''Partial port: baubles + structures, no magic adaptation.'''
+authors = "DreamCat (original); TLSxty (1.18.2 port)"
+credits = "TartaricAcid & Touhou Little Maid contributors; ZUN"
+description = '''Touhou Little Maid: Spell 的 1.18.2 移植版（部分移植：女仆饰品 + 建筑结构，不做魔法适配）。
+
+原模组 Touhou Little Maid: Spell by DreamCat（MIT）：
+https://github.com/yimeng261/Touhou-Little-Maid-Spell
+
+本移植仅调用 Touhou Little Maid（CC-BY-NC-SA）的运行时 API，不内嵌其代码或美术资源。
+本移植仅供非商业用途；使用需自行安装 Touhou Little Maid 本体。'''
 
 [[dependencies."touhou_little_maid_spell"]]
 modId = "forge"
