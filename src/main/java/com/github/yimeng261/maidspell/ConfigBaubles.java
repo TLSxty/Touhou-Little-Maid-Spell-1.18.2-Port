@@ -83,6 +83,9 @@ final class ConfigBaubles {
     private static final ForgeConfigSpec.IntValue SOUL_BOOK_DAMAGE_INTERVAL_THRESHOLD;
     private static final ForgeConfigSpec.IntValue WOUND_RIME_BLADE_RECORD_DURATION;
 
+    // ---- 结构女仆 ----
+    private static final ForgeConfigSpec.BooleanValue STRUCTURE_MAID_LOADOUT_ENABLED;
+
     // ---- 特殊 ----
     private static final ForgeConfigSpec.DoubleValue FLOATING_FOX_LEAF_OWNER_RANGE;
     private static final ForgeConfigSpec.DoubleValue MOLTEN_FOX_LEAF_OWNER_RANGE;
@@ -138,6 +141,9 @@ final class ConfigBaubles {
         Config.floatingFoxLeafOwnerRange = FLOATING_FOX_LEAF_OWNER_RANGE.get();
         Config.moltenFoxLeafOwnerRange = MOLTEN_FOX_LEAF_OWNER_RANGE.get();
         Config.springRingMaxDamageBonus = SPRING_RING_MAX_DAMAGE_BONUS.get();
+
+        // 结构女仆
+        Config.structureMaidLoadoutEnabled = STRUCTURE_MAID_LOADOUT_ENABLED.get();
         DreamCatCrystalBauble.invalidateBeneficialEffectsCache();
     }
 
@@ -310,6 +316,15 @@ final class ConfigBaubles {
                 .comment("春之指环：残血时最多额外造成的伤害比例 (默认: 0.5)",
                         "Spring Ring: maximum extra damage fraction at low health (default: 0.5).")
                 .defineInRange("springRingMaxDamageBonus", 0.5, 0.1, 1.0);
+        BUILDER.pop();
+
+        BUILDER.comment("结构女仆配置", "Structure maid configuration").push("structure_maid");
+        STRUCTURE_MAID_LOADOUT_ENABLED = BUILDER
+                .comment("是否按维度给结构生成的女仆套用血量/背包/饰品载荷 (默认: true)",
+                        "主世界 50 血 + 小背包 + 低档饰品 x1；下界 100 血 + 中背包 + 中档饰品 x1；",
+                        "末地 100 血 + 大背包 + 中档饰品 x3（不重复）；隐世之地整档跳过。",
+                        "Whether to apply per-dimension health/backpack/bauble loadout to structure-spawned maids.")
+                .define("structureMaidLoadoutEnabled", true);
         BUILDER.pop();
 
         BUILDER.pop();

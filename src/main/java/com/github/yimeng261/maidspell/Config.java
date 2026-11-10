@@ -77,6 +77,10 @@ public final class Config {
     public static int soulBookDamageIntervalThreshold = 10;
     public static int woundRimeBladeRecordTimes = 15;
 
+    // ---- 结构女仆 ----
+    /** 是否按维度给结构生成的女仆套用血量/背包/饰品载荷（默认开）。 */
+    public static boolean structureMaidLoadoutEnabled = true;
+
     // ---- 特殊 ----
     public static double floatingFoxLeafOwnerRange = 16.0;
     public static double moltenFoxLeafOwnerRange = 16.0;

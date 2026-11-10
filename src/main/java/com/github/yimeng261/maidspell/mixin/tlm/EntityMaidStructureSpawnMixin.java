@@ -19,6 +19,7 @@ package com.github.yimeng261.maidspell.mixin.tlm;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.yimeng261.maidspell.Config;
 import com.github.yimeng261.maidspell.Global;
+import com.github.yimeng261.maidspell.worldgen.structure.MaidStructureLoadout;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -68,6 +69,9 @@ public class EntityMaidStructureSpawnMixin {
             }
             EntityMaid maid = (EntityMaid) (Object) this;
             BlockPos maidPos = maid.blockPosition();
+            // 先套用按维度的血量/背包/饰品载荷，再决定是否跳过随机外观。
+            // WorldGenLevel#getLevel() 在 1.18.2 的静态类型已是 ServerLevel，无需 instanceof。
+            MaidStructureLoadout.apply(maid, worldIn.getLevel());
             if (maidspell$shouldSkipRandomModel(worldIn, maidPos)) {
                 this.structureSpawn = false;
                 Global.LOGGER.debug("已跳过结构女仆的随机外观初始化（保留结构预设 NBT），位置 {}", maidPos);
