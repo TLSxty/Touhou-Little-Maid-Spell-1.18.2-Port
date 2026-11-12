@@ -1,0 +1,13 @@
+# 与上游 yimeng261/Touhou-Little-Maid-Spell 的 .gitattributes 保持一致
+# 禁止 autocrlf 影响生成文件，它们始终以 LF 生成
+*.java text eol=lf
+*.json text eol=lf
+*.properties text eol=lf
+*.gradle text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.cfg text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+.gitignore text eol=lf
